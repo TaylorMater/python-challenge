@@ -53,13 +53,15 @@ with open(electionDataPath, encoding="utf-8") as electionDataFile:
     for row in csvreader:
         #column 0 is ballot id, colum 1 is county, column 2 is candidate
         totalVotes += 1
-
+        #check if candidate is in the dictionary
         if (row[2] in candidateVoteDict):
+            #yes, so increment vote
             candidateVoteDict[row[2]] = candidateVoteDict[row[2]] + 1
         else:
+            #no, so add candidate with 1 vote
             candidateVoteDict[row[2]] = 1
 
-
+#creeate the strings to output to a file
 analysisFilePath = os.path.join("analysis", "pypoll_analysis.txt")
 analysisStrings = []
 
@@ -68,12 +70,15 @@ analysisStrings.append("-------------------------")
 analysisStrings.append(f"Total Votes: {totalVotes}")
 analysisStrings.append("-------------------------")
 
+#needed to determine winner
 highestShare = 0
 currentWinner = ""
 
 for candidate in list(candidateVoteDict):
+    #calculate percentage share
     percentageShare = candidateVoteDict[candidate]/totalVotes
     if (percentageShare > highestShare):
+        #set new winner if their share is the highest we have seen
         highestShare = percentageShare
         currentWinner = candidate
     analysisStrings.append(f"{candidate}: {percentageShare:.3%} ({candidateVoteDict[candidate]})")
@@ -82,10 +87,11 @@ analysisStrings.append("-------------------------")
 analysisStrings.append(f"Winner: {currentWinner}")
 analysisStrings.append("-------------------------")
 
-
 outputString = "\n".join(analysisStrings)
 
+#print to console
 print(outputString)
 
+#write to analysisFile
 with open(analysisFilePath, "w", encoding="utf-8") as analysisFile:
     analysisFile.write(outputString)
